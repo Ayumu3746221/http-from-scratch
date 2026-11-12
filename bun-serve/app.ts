@@ -3,7 +3,7 @@ export default function Server() {
     port: 8080,
     routes: {},
     fetch(req) {
-      return new Response(`Not Found ${req.method}:${req.url}`, { status: 404 });
+      return new Response(`Not Found ${req.method}:${req.url}\n`, { status: 404 });
     },
   });
 }
