@@ -1,4 +1,5 @@
 import { AppError } from "./errors/application";
+import { openPngFile } from "./services/file";
 import { Hello } from "./services/hello";
 
 export default function Server() {
@@ -14,10 +15,21 @@ export default function Server() {
           if (error instanceof AppError) {
             return Response.json({ message: error.message }, { status: 400 });
           } else {
-            return Response.json({ message: "Invalid Server Error" }, { status: 500 });
+            return Response.json({ message: "Invalid Server Error\n" }, { status: 500 });
           }
         }
         return Response.json({ message }, { status: 200 });
+      },
+      "/photos/:filename": async (req) => {
+        try {
+          return new Response(await openPngFile(req.params.filename));
+        } catch (error) {
+          if (error instanceof AppError) {
+            return Response.json({ message: error.message }, { status: 404 });
+          } else {
+            return Response.json({ message: "Invalid Server Error\n" }, { status: 500 });
+          }
+        }
       },
     },
     fetch(req) {
