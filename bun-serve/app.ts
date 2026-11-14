@@ -1,4 +1,4 @@
-import { AppError } from "./errors/application";
+import { toHttpError } from "./errors/http";
 import { openPngFile } from "./services/file";
 import { Hello } from "./services/hello";
 
@@ -8,27 +8,17 @@ export default function Server() {
     routes: {
       "/hello": new Response("Hello World!!\n", { status: 200 }),
       "/hello/:username": (req) => {
-        let message: string | null = null;
         try {
-          message = Hello(req.params.username);
+          return Response.json({ message: Hello(req.params.username) }, { status: 200 });
         } catch (error) {
-          if (error instanceof AppError) {
-            return Response.json({ message: error.message }, { status: 400 });
-          } else {
-            return Response.json({ message: "Invalid Server Error\n" }, { status: 500 });
-          }
+          return toHttpError(error);
         }
-        return Response.json({ message }, { status: 200 });
       },
       "/photos/:filename": async (req) => {
         try {
           return new Response(await openPngFile(req.params.filename));
         } catch (error) {
-          if (error instanceof AppError) {
-            return Response.json({ message: error.message }, { status: 404 });
-          } else {
-            return Response.json({ message: "Invalid Server Error\n" }, { status: 500 });
-          }
+          return toHttpError(error);
         }
       },
     },
