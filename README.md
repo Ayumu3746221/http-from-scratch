@@ -1,3 +1,3 @@
-# bun-http-server
+# http from scratch
 
 Before written
