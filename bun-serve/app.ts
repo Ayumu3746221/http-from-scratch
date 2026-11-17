@@ -24,7 +24,7 @@ export default function Server() {
         },
         POST: async (req) => {
           try {
-            const isWriten = writePngFile(await req.bytes(), req.params.filename);
+            const isWriten = await writePngFile(await req.bytes(), req.params.filename);
             if (!isWriten) {
               return new Response("Application Error", { status: 500 });
             }
