@@ -1,5 +1,5 @@
 import { toHttpError } from "./errors/http";
-import { openPngFile } from "./services/file";
+import { openPngFile, writePngFile } from "./services/file";
 import { Hello } from "./services/hello";
 
 export default function Server() {
@@ -23,23 +23,16 @@ export default function Server() {
           }
         },
         POST: async (req) => {
-          console.log("===== console.log(req) =====\n");
-          console.log(req);
+          try {
+            const isWriten = writePngFile(await req.bytes(), req.params.filename);
+            if (!isWriten) {
+              return new Response("Application Error", { status: 500 });
+            }
 
-          console.log("===== console.log(req.header) ====\n");
-          console.log(req.headers);
-
-          console.log("===== console.log(req.bytes()) =====\n");
-          const bytes = await req.bytes();
-          console.log(bytes);
-
-          console.log("===== console.log, metadata =====\n");
-          const { format } = await new Bun.Image(bytes).metadata();
-          console.log(`this file MIME type is ${format}`);
-          const filePath = new URL(`./photos/${req.params.filename}.png`, import.meta.url);
-          await Bun.write(filePath, bytes);
-
-          return new Response(`Sorry not impl`, { status: 500 });
+            return new Response(`Success writed ${req.params.filename}`, { status: 201 });
+          } catch (error) {
+            return toHttpError(error);
+          }
         },
       },
     },
