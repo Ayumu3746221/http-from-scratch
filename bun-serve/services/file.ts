@@ -21,7 +21,7 @@ export const writePngFile = async (bytes: Uint8Array, fileName: string): Promise
     throw new InvalidRequestError("png", format);
   }
 
-  if (pixel <= MAX_FILE_PIXEL) {
+  if (pixel >= MAX_FILE_PIXEL) {
     throw new InvalidRequestError("1980 * 1080 or smaller", pixel.toString());
   }
 
